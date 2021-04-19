@@ -12,8 +12,8 @@
         <activity android:name=".IstoricAlarmeActivity"></activity>
         <activity android:name=".ParametriiActivity" />
         <activity android:name=".CalendarActivity" />
-        <activity android:name=".RecomandariActivity" />
         <activity android:name=".ProfilActivity" />
+        <activity android:name=".RecomandariActivity" />
         <activity android:name=".HomeActivity"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         </activity>

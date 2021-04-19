@@ -3,9 +3,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorWhite"
+    android:background="@drawable/layout_bg">
     android:clickable="true"
-    android:onClick="clickedRecomandare"
     android:id="@+id/recomandare_main_linear_layout">
 
     <ImageView
@@ -58,7 +57,7 @@
                 android:text="30"/>
 
             <TextView
-                android:id="@+id/minuteTt"
+                android:id="@+id/minuteTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
