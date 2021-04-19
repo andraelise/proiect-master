@@ -32,11 +32,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getSupportActionBar().setTitle("Logare");
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
-        tvSignIn = findViewById(R.id.signIn);
+        tvSignIn = findViewById(R.id.parolaUitata);
         tvSignIn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {

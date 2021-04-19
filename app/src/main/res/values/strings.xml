@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ProiectMaster</string>
+    <string name="recomandari">Recomandari</string>
+    <string name="calendar">Calendar</string>
+    <string name="alarme">Alarme</string>
+    <string name="parametrii">Parametrii</string>
 </resources>
