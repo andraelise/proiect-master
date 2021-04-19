@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/recomandariRelativeLayout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RecomandariActivity"
+    android:background="@drawable/gradient_bg">
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="35dp"
+        android:text="Recomandarile medicului"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="@font/fredokaone"
+        android:textSize="25dp"
+        android:gravity="center">
+        <requestFocus />
+    </TextView>
+
+    <ListView
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="100dp"
+        android:id="@+id/recomandariListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15dp"/>
+
+</RelativeLayout>
