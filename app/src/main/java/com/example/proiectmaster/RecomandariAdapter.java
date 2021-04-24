@@ -61,7 +61,7 @@ public class RecomandariAdapter extends ArrayAdapter<Recomandare> {
                 imageView.setBackground(context.getResources().getDrawable(R.drawable.jogging));
                 break;
             default:
-                imageView.setBackground(context.getResources().getDrawable(R.drawable.bike));
+                imageView.setBackground(context.getResources().getDrawable(R.drawable.activitate));
                 break;
         }
 

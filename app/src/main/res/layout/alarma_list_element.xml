@@ -5,63 +5,56 @@
     android:layout_height="wrap_content"
     android:background="@drawable/layout_bg"
     android:clickable="true"
-    android:id="@+id/recomandare_main_linear_layout">
+    android:id="@+id/alarma_main_linear_layout">
 
     <ImageView
-        android:id="@+id/recomandareImg"
+        android:id="@+id/alarmaImg"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/bike"
+        android:background="@drawable/ecg"
         android:clickable="true">
     </ImageView>
 
     <LinearLayout
-        android:id="@+id/recomandare_info_row"
+        android:id="@+id/alarma_info_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/activitateTxt"
+            android:id="@+id/parametruTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:text="Activitate"
+            android:text="Parametru"
             android:textSize="20sp"
             android:textColor="@color/colorPinkDark"
             android:textStyle="bold"/>
-        
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginLeft="0dp">
 
-        <TextView
-            android:id="@+id/durataTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Durata:"
-            android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/dataTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Data:"
+                android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/durataValTxt"
+                android:id="@+id/dataValTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="30"/>
-
-            <TextView
-                android:id="@+id/minuteTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="minute"/>
+                android:text="21/04/2021 14:50"/>
 
         </LinearLayout>
 
@@ -72,26 +65,26 @@
             android:layout_marginLeft="0dp">
 
             <TextView
-                android:id="@+id/frecventaTxt"
+                android:id="@+id/valoriNormaleTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="Frecventa:"
+                android:text="Valori normale:"
                 android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/frecventaValTxt"
+                android:id="@+id/intervalValoriTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="30"/>
+                android:text="35 - 37"/>
 
             <TextView
-                android:id="@+id/peSaptamanaTxt"
+                android:id="@+id/unitateMasuraTxt1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="/saptamana"/>
+                android:text="°C"/>
 
         </LinearLayout>
 
@@ -102,19 +95,29 @@
             android:layout_marginLeft="0dp">
 
             <TextView
-                android:id="@+id/indicatiiTxt"
+                android:id="@+id/valoriActualeTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="Indicatii:"
-                android:textStyle="bold"/>
+                android:text="Valori actuale:"
+                android:textStyle="bold"
+                android:textColor="#FF0000"/>
 
             <TextView
-                android:id="@+id/indicatiiValTxt"
+                android:id="@+id/valoriActualeValTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="indicatii text"/>
+                android:text="38"
+                android:textColor="#FF0000"/>
+
+            <TextView
+                android:id="@+id/unitateMasuraTxt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="°C"
+                android:textColor="#FF0000"/>
 
         </LinearLayout>
 

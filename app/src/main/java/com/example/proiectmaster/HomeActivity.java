@@ -1,45 +1,43 @@
 package com.example.proiectmaster;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
     Button btnLogout;
     ImageView imgProfil;
+    TextView numePacient;
     CardView cardRecomandari, cardCalendar, cardParametrii, cardAlarme;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseFirestore db;
+    private static final String TAG = "HomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        numePacient = findViewById(R.id.txtNumePacient);
         btnLogout = findViewById(R.id.btnLogout);
-//        btnLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FirebaseAuth.getInstance().signOut();
-//                startActivity(new Intent(HomeActivity.this, RegisterActivity.class));
-//            }
-//        });
-
         imgProfil = findViewById(R.id.imgProfil);
-//        imgProfil.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(HomeActivity.this, ProfilActivity.class));
-//            }
-//        });
-
         cardRecomandari = findViewById(R.id.cardRecomandari);
         cardCalendar = findViewById(R.id.cardCalendar);
         cardParametrii = findViewById(R.id.cardParametrii);
@@ -51,11 +49,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         cardCalendar.setOnClickListener(this);
         cardParametrii.setOnClickListener(this);
         cardAlarme.setOnClickListener(this);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            getPatientName(uid);
+        }
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.cardRecomandari:
                 startActivity(new Intent(HomeActivity.this, RecomandariActivity.class));
                 break;
@@ -78,5 +82,34 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    private void connect() {
+        db = FirebaseFirestore.getInstance();
+        Log.d(TAG, "Connected successfully!");
+    }
+
+    private void getPatientName(String uid) {
+        connect();
+        DocumentReference pacientRef = db.collection("pacienti").document(uid);
+        pacientRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    String nume = document.getString("nume");
+                    String prenume = document.getString("prenume");
+                    displayPatientName(nume, prenume);
+                }
+                else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void displayPatientName(String nume, String prenume)
+    {
+        numePacient.setText(prenume + " " + nume);
     }
 }

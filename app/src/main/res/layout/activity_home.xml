@@ -55,9 +55,10 @@
                         android:fontFamily="@font/fredokaone"/>
 
                     <TextView
+                        android:id="@+id/txtNumePacient"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Andra Seserman"
+                        android:text="Nume pacient"
                         android:textSize="15dp"
                         android:textStyle="bold"
                         android:textColor="@color/colorWhite"
