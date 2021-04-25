@@ -43,14 +43,14 @@ public class IstoricAlarmeAdapter extends ArrayAdapter<Alarma> {
         TextView parametruTxt = (TextView) listItem.findViewById(R.id.parametruTxt);
         parametruTxt.setText(currentAlarma.getParametru());
 
-        String valMinima = Integer.toString(currentAlarma.getValMinima());
-        String valMaxima = Integer.toString(currentAlarma.getValMaxima());
+        String valMinima = Double.toString(currentAlarma.getValMinima());
+        String valMaxima = Double.toString(currentAlarma.getValMaxima());
         String interval = valMinima + " - " + valMaxima;
         TextView valoriNormaleTxt = (TextView) listItem.findViewById(R.id.intervalValoriTxt);
         valoriNormaleTxt.setText(interval);
 
         TextView valoriActualeTxt = (TextView) listItem.findViewById(R.id.valoriActualeValTxt);
-        valoriActualeTxt.setText(Integer.toString(currentAlarma.getValActuala()));
+        valoriActualeTxt.setText(Double.toString(currentAlarma.getValActuala()));
 
         TextView dataTxt = (TextView) listItem.findViewById(R.id.dataValTxt);
         dataTxt.setText(formatDate(currentAlarma.getData()));
