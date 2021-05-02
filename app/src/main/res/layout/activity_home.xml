@@ -20,7 +20,7 @@
             <ImageView
                 android:id="@+id/imageHeader"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
+                android:layout_height="200dp"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"
                 android:src="@drawable/gradient_bg"
@@ -67,15 +67,6 @@
                 </RelativeLayout>
 
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btnLogout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Logout"
-                tools:layout_editor_absoluteX="146dp"
-                tools:layout_editor_absoluteY="99dp"
-                tools:ignore="MissingConstraints" />
 
             <View
                 android:id="@+id/viewSupporter"

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,12 +20,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btnLogout;
     ImageView imgProfil;
     TextView numePacient;
     CardView cardRecomandari, cardCalendar, cardParametrii, cardAlarme;
-    FirebaseAuth mFirebaseAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseFirestore db;
     private static final String TAG = "HomeActivity";
 
@@ -36,14 +32,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
 
         numePacient = findViewById(R.id.txtNumePacient);
-        btnLogout = findViewById(R.id.btnLogout);
         imgProfil = findViewById(R.id.imgProfil);
         cardRecomandari = findViewById(R.id.cardRecomandari);
         cardCalendar = findViewById(R.id.cardCalendar);
         cardParametrii = findViewById(R.id.cardParametrii);
         cardAlarme = findViewById(R.id.cardAlarme);
 
-        btnLogout.setOnClickListener(this);
         imgProfil.setOnClickListener(this);
         cardRecomandari.setOnClickListener(this);
         cardCalendar.setOnClickListener(this);
@@ -74,10 +68,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imgProfil:
                 startActivity(new Intent(HomeActivity.this, ProfilActivity.class));
-                break;
-            case R.id.btnLogout:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(HomeActivity.this, RegisterActivity.class));
                 break;
             default:
                 break;

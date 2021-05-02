@@ -1,8 +1,5 @@
 package com.example.proiectmaster;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +7,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,12 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Pattern;
 
-// Test push github
-
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     EditText email, password;
     Button btnSignIn;
-    TextView tvSignIn;
+    TextView parolaUitata;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -34,18 +32,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().setTitle("Logare");
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
-        tvSignIn = findViewById(R.id.parolaUitata);
-        tvSignIn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(registerIntent);
-            }
-        });
+        parolaUitata = findViewById(R.id.parolaUitata);
+        btnSignIn = findViewById(R.id.btnSignIn);
 
+        parolaUitata.setOnClickListener(this);
+        btnSignIn.setOnClickListener(this);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -61,59 +56,100 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
-
-        btnSignIn = findViewById(R.id.btnSignIn);
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String emailAddress = email.getText().toString();
-                String pwd = password.getText().toString();
-
-                if (emailAddress.isEmpty() && pwd.isEmpty())
-                {
-                    Toast.makeText(LoginActivity.this, "Datele de autentificare nu sunt completate!", Toast.LENGTH_SHORT).show();
-                }
-                else if (emailAddress.isEmpty())
-                {
-                    email.setError("Introdu adresa de email!");
-                    email.requestFocus();
-                }
-                else if (!isValidEmail(emailAddress))
-                {
-                    email.setError("Introdu o adresă de email validă!");
-                    email.requestFocus();
-                }
-                else if (pwd.isEmpty())
-                {
-                    password.setError("Introdu parola!");
-                    password.requestFocus();
-                }
-                else if (!(emailAddress.isEmpty() || pwd.isEmpty()))
-                {
-                    mFirebaseAuth.signInWithEmailAndPassword(emailAddress, pwd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Logare eșuată!", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                            }
-                        }
-                    });
-                }
-                else
-                {
-                    Toast.makeText(LoginActivity.this, "Eroare la logare!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            });
     }
 
     protected void onStart() {
         super.onStart();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnSignIn:
+                signIn(email.getText().toString(), password.getText().toString());
+                break;
+            case R.id.parolaUitata:
+                sendResetEmail(email.getText().toString());
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void signIn(String emailAddress, String pwd)
+    {
+        if (!validateForm(emailAddress, pwd)) {
+            return;
+        }
+
+        mFirebaseAuth.signInWithEmailAndPassword(emailAddress, pwd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(LoginActivity.this, "Logare eșuată!", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                }
+            }
+        });
+    }
+
+    private void sendResetEmail(String emailAddress)
+    {
+        if (emailAddress.isEmpty())
+        {
+            email.setError("Introdu adresa de email!");
+            email.requestFocus();
+            return;
+        }
+        else if (!isValidEmail(emailAddress))
+        {
+            email.setError("Introdu o adresă de email validă!");
+            email.requestFocus();
+            return;
+        }
+
+        mFirebaseAuth.sendPasswordResetEmail(emailAddress).addOnCompleteListener(new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(LoginActivity.this, "Verifica-ti email-ul pentru a reseta parola!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Eroare la trimiterea email-ului de resetare a parolei!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private boolean validateForm(String emailAddress, String pwd)
+    {
+        if (emailAddress.isEmpty() && pwd.isEmpty())
+        {
+            Toast.makeText(LoginActivity.this, "Datele de autentificare nu sunt completate!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (emailAddress.isEmpty())
+        {
+            email.setError("Introdu adresa de email!");
+            email.requestFocus();
+            return false;
+        }
+        else if (!isValidEmail(emailAddress))
+        {
+            email.setError("Introdu o adresă de email validă!");
+            email.requestFocus();
+            return false;
+        }
+        else if (pwd.isEmpty())
+        {
+            password.setError("Introdu parola!");
+            password.requestFocus();
+            return false;
+        }
+
+        return true;
     }
 
     private boolean isValidEmail(String email) {

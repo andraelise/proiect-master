@@ -11,16 +11,15 @@
         android:id="@+id/parolaUitata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="AI UITAT PAROLA?"
         android:textColor="@color/colorPinkDark"
         android:textSize="15dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSignIn"
-        app:layout_constraintVertical_bias="0.261" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSignIn" />
 
     <EditText
         android:id="@+id/email"
@@ -61,7 +60,7 @@
         android:id="@+id/btnSignIn"
         android:layout_width="174dp"
         android:layout_height="46dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/round_bg"
         android:text="Sign In"
         android:textColor="@color/colorWhite"

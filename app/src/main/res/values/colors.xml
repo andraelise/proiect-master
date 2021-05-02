@@ -7,4 +7,6 @@
     <color name="colorPinkDark">#FD3A84</color>
     <color name="colorOrange">#FFA68D</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorRed">#FF3943</color>
+    <color name="colorRedDark">#801B20</color>
 </resources>
