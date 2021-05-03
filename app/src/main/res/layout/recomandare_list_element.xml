@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/layout_bg"
-    android:clickable="true"
     android:id="@+id/recomandare_main_linear_layout">
 
     <ImageView
@@ -14,13 +13,12 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/bike"
-        android:clickable="true">
+        android:background="@drawable/bike">
     </ImageView>
 
     <LinearLayout
         android:id="@+id/recomandare_info_row"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_vertical">
@@ -117,6 +115,31 @@
                 android:text="indicatii text"/>
 
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                android:text="PROGRAMEAZA"
+                android:textSize="9dp"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:background="@drawable/round_bg"
+                android:onClick="clickedRecomandare"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.proiectmaster">
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AdaugaActivitateActivity"></activity>
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,16 +21,16 @@
         </activity>
         <activity android:name=".IstoricAlarmeActivity" />
         <activity android:name=".ParametriiActivity" />
-        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".CalendarActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity android:name=".RecomandariActivity" />
         <activity android:name=".ProfilActivity" />
         <activity
             android:name=".HomeActivity"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"></activity>
-        <activity android:name=".LoginActivity">
-        </activity>
-        <activity android:name=".RegisterActivity"></activity>
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".RegisterActivity" />
     </application>
 
 </manifest>
-

@@ -1,8 +1,13 @@
 package com.example.proiectmaster;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,5 +70,23 @@ public class RecomandariActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void clickedRecomandare(View view) {
+
+        RelativeLayout relativeLayout = (RelativeLayout) view.getParent();
+        LinearLayout linearLayout1 = (LinearLayout) relativeLayout.getParent();
+        LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getParent();
+        // LinearLayout linearLayout1 = parent.findViewById(R.id.recomandare_info_row);
+        TextView tipActivitateTxt = linearLayout2.findViewById(R.id.activitateTxt);
+        TextView durataTxt = linearLayout2.findViewById(R.id.durataValTxt);
+
+        String tipActivitate = tipActivitateTxt.getText().toString();
+        String durata = durataTxt.getText().toString();
+
+        Intent intent = new Intent(RecomandariActivity.this, AdaugaActivitateActivity.class);
+        intent.putExtra("TIP_ACTIVITATE", tipActivitate);
+        intent.putExtra("DURATA", durata);
+        startActivity(intent);
     }
 }
