@@ -92,10 +92,6 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void displayList() {
-//        evenimenteList.add((new Eveniment("Bicicleta", 30, new Date())));
-//        evenimenteList.add((new Eveniment("Alergat", 10, new Date())));
-//        evenimenteList.add((new Eveniment("Mers", 20, new Date())));
-
         if (evenimenteList.isEmpty())
             txtData.setText("Nu exista activitati in ");
         else
