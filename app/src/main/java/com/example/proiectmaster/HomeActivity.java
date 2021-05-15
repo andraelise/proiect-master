@@ -1,16 +1,19 @@
 package com.example.proiectmaster;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.example.proiectmaster.Services.BluetoothService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +51,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (user != null) {
             String uid = user.getUid();
             getPatientName(uid);
+        }
+
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if(bluetoothAdapter.isEnabled())
+        {
+            Intent btService = new Intent(this, BluetoothService.class);
+            startService(btService);
+            Log.d(TAG,"Bluetooth service started!");
+        }
+        else
+        {
+            Toast.makeText(this, "Please enable bluetooth.", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -1,26 +1,36 @@
 package com.example.proiectmaster;
 
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proiectmaster.Models.Alarma;
+import com.example.proiectmaster.Services.BluetoothService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,11 +46,97 @@ public class ParametriiActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private static final String TAG = "ParametriiActivity";
 
+    // variables used for binding bluetooth service to this activity
+    BluetoothService mBtService;
+    boolean mBound = false;
+    private Thread hardwareThread;
+
+    // UI text views for sensor values
+    TextView txtParamTemp;
+    TextView txtParamHumidity;
+    TextView txtParamPulse;
+    TextView txtParamECG;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG,"Bind connected!");
+            BluetoothService.LocalBinder binder = (BluetoothService.LocalBinder) iBinder;
+            mBtService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d(TAG,"Bind disconnected!");
+            mBound = false;
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // bind to bluetooth service
+        if(BluetoothAdapter.getDefaultAdapter().isEnabled())
+        {
+            Intent bindIntent = new Intent(this,BluetoothService.class);
+            bindService(bindIntent,connection, Context.BIND_AUTO_CREATE);
+        }
+
+    }
+
+    /* Thread class for receiving hardware values frm service */
+    public class HardwareThread extends Thread{
+        @Override
+        public synchronized void start() {
+            super.start();
+            Log.d(TAG,"Started getting values...");
+        }
+
+        @Override
+        public void run() {
+            while (true)
+            {
+                if (mBtService != null && BluetoothAdapter.getDefaultAdapter().isEnabled())  {
+                    String sensorValues = mBtService.getSensorsValues();
+                    Log.d(TAG, "Sensor values: " + sensorValues);
+                    if(!sensorValues.equals(""))
+                    {
+                        String[] splitValues = sensorValues.split(";");
+                        // humidity; temp; pulse
+                        try {
+                            txtParamHumidity.setText(splitValues[0]);
+                            txtParamTemp.setText(splitValues[1]);
+                            txtParamPulse.setText(splitValues[2]);
+                            // TODO: ECG value must be added when tested together
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.e(TAG,"Error caught while splitting sensor values", ex);
+                        }
+                    }
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parametrii);
         getSupportActionBar().setTitle("Parametrii");
+
+        txtParamECG = findViewById(R.id.txt_params_ecg);
+        txtParamHumidity = findViewById(R.id.txt_params_humidity);
+        txtParamPulse = findViewById(R.id.txt_params_pulse);
+        txtParamTemp = findViewById(R.id.txt_params_temp);
 
         btnAlarma = findViewById(R.id.btnAlarma);
         dialogAlarma = new Dialog(this);
@@ -58,6 +154,17 @@ public class ParametriiActivity extends AppCompatActivity {
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // get values from service on separate thread
+        if(BluetoothAdapter.getDefaultAdapter().isEnabled())
+        {
+            HardwareThread getHardwareValuesThread = new HardwareThread();
+            getHardwareValuesThread.start();
+        }
+        else{
+            Toast.makeText(this, "Porneste bluetooth pentru monitorizare!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void openDialogAlarma(Alarma alarma) {

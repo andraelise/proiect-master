@@ -88,7 +88,8 @@
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="37°C"/>
+                        android:id="@+id/txt_params_temp"
+                        android:text="-"/>
 
                 </LinearLayout>
 
@@ -134,7 +135,8 @@
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="Valoare"/>
+                        android:id="@+id/txt_params_ecg"
+                        android:text="-"/>
 
                 </LinearLayout>
 
@@ -184,7 +186,8 @@
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="80 bpm"/>
+                        android:id="@+id/txt_params_pulse"
+                        android:text="-"/>
 
                 </LinearLayout>
 
@@ -233,7 +236,8 @@
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="70%"/>
+                        android:id="@+id/txt_params_humidity"
+                        android:text="-"/>
 
                 </LinearLayout>
 
