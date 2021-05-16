@@ -68,8 +68,8 @@
                     android:padding="15dp">
 
                     <ImageView
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:contentDescription="@string/app_name"
                         android:src="@drawable/temperatura"/>
 
@@ -79,17 +79,32 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="Temperatura"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:id="@+id/txt_params_temp"
-                        android:text="-"/>
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:id="@+id/txt_params_temp"
+                            android:text="-"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:text=" °C"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -115,8 +130,8 @@
                     android:padding="15dp">
 
                     <ImageView
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:contentDescription="@string/app_name"
                         android:src="@drawable/ecg"/>
 
@@ -126,17 +141,32 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="ECG"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:id="@+id/txt_params_ecg"
-                        android:text="-"/>
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:id="@+id/txt_params_ecg"
+                            android:text="-"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:text=" ?"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -166,8 +196,8 @@
                     android:padding="15dp">
 
                     <ImageView
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:contentDescription="@string/app_name"
                         android:src="@drawable/puls"/>
 
@@ -177,17 +207,32 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="Puls"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:id="@+id/txt_params_pulse"
-                        android:text="-"/>
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:id="@+id/txt_params_pulse"
+                            android:text="-"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:text=" bpm"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -216,8 +261,8 @@
                     android:padding="15dp">
 
                     <ImageView
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:contentDescription="@string/app_name"
                         android:src="@drawable/umiditate"/>
 
@@ -227,17 +272,32 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="Umiditate"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:id="@+id/txt_params_humidity"
-                        android:text="-"/>
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:id="@+id/txt_params_humidity"
+                            android:text="-"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="20dp"
+                            android:text=" %"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

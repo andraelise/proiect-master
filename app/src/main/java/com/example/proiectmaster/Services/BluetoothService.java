@@ -12,11 +12,21 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,6 +47,10 @@ public class BluetoothService extends Service {
     private String deviceAddress;
     private String hardwareValues;
 
+    FirebaseAuth mFirebaseAuth;
+    FirebaseUser user;
+    private FirebaseFirestore db;
+    CollectionReference parametriRef;
 
     @Nullable
     @Override
@@ -48,7 +62,6 @@ public class BluetoothService extends Service {
     public void onCreate() {
         super.onCreate();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
 
         // Get List of Paired Bluetooth Device
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -62,15 +75,16 @@ public class BluetoothService extends Service {
             }
         }
 
-
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        parametriRef = db.collection("pacienti").document(user.getUid()).collection("parametri");
     }
 
     public String getSensorsValues()
     {
         return hardwareValues;
     }
-
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -96,6 +110,9 @@ public class BluetoothService extends Service {
                         hardwareValues = arduinoMsg;
                         // TODO: add tresholds for values received from arduino
                         // TODO: if values are correct add them to firebase
+                        if (!hardwareValues.equals("")) {
+                            writeValuesToFirestore(hardwareValues);
+                        }
                         Log.d(TAG,"Arduino Message : " + arduinoMsg);
                         break;
                 }
@@ -177,6 +194,81 @@ public class BluetoothService extends Service {
                 Log.e(TAG, "Could not close the client socket", e);
             }
         }
+    }
+
+    public void writeValuesToFirestore(String values)
+    {
+        String humidity, temp, pulse;
+        String[] splitValues = values.split(";");
+        // humidity; temp; pulse
+        try {
+            humidity = splitValues[0];
+            temp = splitValues[1];
+            pulse = splitValues[2];
+            // TODO: ECG value must be added when tested together
+
+            Date data = new Date();
+            String umiditate = data.toString() + ";" + humidity;
+            String temperatura = data.toString() + ";" + temp;
+            String puls = data.toString() + ";" + pulse;
+            writeHumidity(umiditate);
+            writeTemperature(temperatura);
+            writePulse(puls);
+        }
+        catch (Exception ex) {
+            Log.e(TAG, "Error caught while splitting sensor values", ex);
+        }
+    }
+
+    public void writeHumidity(String humidity)
+    {
+        parametriRef.document("Umiditate").update("valori", FieldValue.arrayUnion(humidity))
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Valoare adaugata cu succes: " + humidity);
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Eroare la adaugarea valorii pentru umiditate", e);
+                }
+            });
+    }
+
+    public void writeTemperature(String temp)
+    {
+        parametriRef.document("Temperatura").update("valori", FieldValue.arrayUnion(temp))
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Valoare adaugata cu succes: " + temp);
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Eroare la adaugarea valorii pentru temperatura", e);
+                }
+            });
+    }
+
+    public void writePulse(String pulse)
+    {
+        parametriRef.document("Puls").update("valori", FieldValue.arrayUnion(pulse))
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Valoare adaugata cu succes: " + pulse);
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Eroare la adaugarea valorii pentru puls", e);
+                }
+            });
     }
 
     /* Binding classs */

@@ -40,8 +40,8 @@
 
                     <ImageView
                         android:id="@+id/imgProfil"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_alignParentRight="true"
                         android:src="@drawable/user"/>
 
@@ -59,7 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Nume pacient"
-                        android:textSize="15dp"
+                        android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@color/colorWhite"
                         android:layout_below="@id/txtWelcome">/</TextView>
@@ -107,7 +107,7 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="@string/recomandari"/>
 
                 </LinearLayout>
@@ -145,7 +145,7 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="@string/calendar"/>
 
                 </LinearLayout>
@@ -187,7 +187,7 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="@string/parametrii"/>
 
                 </LinearLayout>
@@ -229,7 +229,7 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20dp"
                         android:text="@string/alarme"/>
 
                 </LinearLayout>

@@ -19,8 +19,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:headerColor="@color/colorPinkDark"
-                app:todayLabelColor="@color/colorPinkDark"
-                app:highlightedDaysLabelsColor="@color/colorOrange"
+                app:todayLabelColor="@color/colorOrange"
+                app:highlightedDaysLabelsColor="@color/colorPinkDark"
                 app:selectionColor="@color/colorPinkDark"
                 app:type="one_day_picker"/>
 

@@ -53,17 +53,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             getPatientName(uid);
         }
 
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if(bluetoothAdapter.isEnabled())
-        {
-            Intent btService = new Intent(this, BluetoothService.class);
-            startService(btService);
-            Log.d(TAG,"Bluetooth service started!");
+        if (BluetoothAdapter.getDefaultAdapter() != null) {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (bluetoothAdapter.isEnabled()) {
+                Intent btService = new Intent(this, BluetoothService.class);
+                startService(btService);
+                Log.d(TAG, "Bluetooth service started!");
+            } else {
+                Toast.makeText(this, "Please enable bluetooth.", Toast.LENGTH_LONG).show();
+            }
         }
         else
         {
-            Toast.makeText(this, "Please enable bluetooth.", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "BluetoothAdapter is null!");
         }
     }
 

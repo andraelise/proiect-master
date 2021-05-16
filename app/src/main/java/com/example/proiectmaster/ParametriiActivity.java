@@ -30,8 +30,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -44,6 +42,7 @@ public class ParametriiActivity extends AppCompatActivity {
     FirebaseAuth mFirebaseAuth;
     FirebaseUser user;
     private FirebaseFirestore db;
+    BluetoothAdapter bluetoothAdapter;
     private static final String TAG = "ParametriiActivity";
 
     // variables used for binding bluetooth service to this activity
@@ -73,59 +72,45 @@ public class ParametriiActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // bind to bluetooth service
-        if(BluetoothAdapter.getDefaultAdapter().isEnabled())
-        {
-            Intent bindIntent = new Intent(this,BluetoothService.class);
-            bindService(bindIntent,connection, Context.BIND_AUTO_CREATE);
-        }
-
-    }
-
     /* Thread class for receiving hardware values frm service */
-    public class HardwareThread extends Thread{
+    public class HardwareThread extends Thread {
         @Override
         public synchronized void start() {
             super.start();
-            Log.d(TAG,"Started getting values...");
+            Log.d(TAG, "Started getting values...");
         }
 
         @Override
         public void run() {
-            while (true)
-            {
-                if (mBtService != null && BluetoothAdapter.getDefaultAdapter().isEnabled())  {
-                    String sensorValues = mBtService.getSensorsValues();
-                    Log.d(TAG, "Sensor values: " + sensorValues);
-                    if(!sensorValues.equals(""))
-                    {
-                        String[] splitValues = sensorValues.split(";");
-                        // humidity; temp; pulse
-                        try {
-                            txtParamHumidity.setText(splitValues[0]);
-                            txtParamTemp.setText(splitValues[1]);
-                            txtParamPulse.setText(splitValues[2]);
-                            // TODO: ECG value must be added when tested together
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.e(TAG,"Error caught while splitting sensor values", ex);
+            while (true) {
+                if (bluetoothAdapter != null) {
+                    if (mBtService != null && bluetoothAdapter.isEnabled()) {
+                        String sensorValues = mBtService.getSensorsValues();
+                        Log.d(TAG, "Sensor values: " + sensorValues);
+                        if (!sensorValues.equals("")) {
+                            String[] splitValues = sensorValues.split(";");
+                            // humidity; temp; pulse
+                            try {
+                                txtParamHumidity.setText(splitValues[0]);
+                                txtParamTemp.setText(splitValues[1]);
+                                txtParamPulse.setText(splitValues[2]);
+                                // TODO: ECG value must be added when tested together
+                            } catch (Exception ex) {
+                                Log.e(TAG, "Error caught while splitting sensor values", ex);
+                            }
                         }
                     }
-                }
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.d(TAG, "BluetoothAdapter is null!");
                 }
             }
-
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,16 +140,36 @@ public class ParametriiActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        // get values from service on separate thread
-        if(BluetoothAdapter.getDefaultAdapter().isEnabled())
+        if (BluetoothAdapter.getDefaultAdapter() != null) {
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            // get values from service on separate thread
+            if (bluetoothAdapter.isEnabled()) {
+                HardwareThread getHardwareValuesThread = new HardwareThread();
+                getHardwareValuesThread.start();
+            } else {
+                Toast.makeText(this, "Porneste bluetooth pentru monitorizare!", Toast.LENGTH_LONG).show();
+            }
+        }
+        else
         {
-            HardwareThread getHardwareValuesThread = new HardwareThread();
-            getHardwareValuesThread.start();
+            Log.d(TAG, "BluetoothAdapter is null!");
         }
-        else{
-            Toast.makeText(this, "Porneste bluetooth pentru monitorizare!", Toast.LENGTH_LONG).show();
-        }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // bind to bluetooth service
+        if (bluetoothAdapter != null) {
+            if (BluetoothAdapter.getDefaultAdapter().isEnabled()) {
+                Intent bindIntent = new Intent(this, BluetoothService.class);
+                bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
+            }
+        }
+        else
+        {
+            Log.d(TAG, "BluetoothAdapter is null!");
+        }
     }
 
     private void openDialogAlarma(Alarma alarma) {

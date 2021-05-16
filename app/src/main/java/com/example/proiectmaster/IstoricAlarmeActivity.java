@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -55,7 +56,7 @@ public class IstoricAlarmeActivity extends AppCompatActivity {
 
     public void getAlarme(String uid) {
         connect();
-        db.collection("pacienti").document(uid).collection("alarme").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("pacienti").document(uid).collection("alarme").orderBy("data", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
