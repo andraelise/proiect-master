@@ -89,12 +89,12 @@ public class ParametriiActivity extends AppCompatActivity {
                         Log.d(TAG, "Sensor values: " + sensorValues);
                         if (!sensorValues.equals("")) {
                             String[] splitValues = sensorValues.split(";");
-                            // humidity; temp; pulse
+                            // humidity; temp; pulse; ECG
                             try {
                                 txtParamHumidity.setText(splitValues[0]);
                                 txtParamTemp.setText(splitValues[1]);
                                 txtParamPulse.setText(splitValues[2]);
-                                // TODO: ECG value must be added when tested together
+                                txtParamECG.setText(splitValues[3]);
                             } catch (Exception ex) {
                                 Log.e(TAG, "Error caught while splitting sensor values", ex);
                             }
@@ -264,5 +264,12 @@ public class ParametriiActivity extends AppCompatActivity {
                 Log.w(TAG, "Error adding document", e);
                 }
             });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent serviceIntent = new Intent(this,BluetoothService.class);
+        stopService(serviceIntent);
     }
 }
