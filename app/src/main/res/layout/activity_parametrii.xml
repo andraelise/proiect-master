@@ -124,49 +124,27 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="185dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="15dp">
 
-                    <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/ecg"/>
-
-                    <TextView
+                    <com.robinhood.spark.SparkView
+                        android:id="@+id/sv_ecg_values"
                         android:layout_width="match_parent"
+                        android:layout_height="130dp"
+                        app:spark_lineColor="#FF0000"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="2dp"
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textSize="20dp"
                         android:text="ECG"/>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textStyle="bold"
-                            android:textSize="20dp"
-                            android:id="@+id/txt_params_ecg"
-                            android:text="-"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textStyle="bold"
-                            android:textSize="20dp"
-                            android:text=" ?"/>
-
-                    </LinearLayout>
 
                 </LinearLayout>
 
