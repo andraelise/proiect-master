@@ -30,7 +30,6 @@ public class IstoricAlarmeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_istoric_alarme);
-        getSupportActionBar().setTitle("Istoric alarme");
 
         listView = findViewById(R.id.alarmeListView);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

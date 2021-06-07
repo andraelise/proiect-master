@@ -40,22 +40,6 @@
             android:textColor="@color/colorPinkDark"
             android:textStyle="bold"/>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/imageViewDelete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|end"
-                    android:paddingTop="3dp"
-                    android:paddingRight="3dp"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_close_black"/>
-
-            </RelativeLayout>
-
         </LinearLayout>
 
         <LinearLayout

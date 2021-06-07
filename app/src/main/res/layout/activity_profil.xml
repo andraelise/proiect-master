@@ -23,7 +23,7 @@
             android:id="@+id/txtNumeUtilizator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Andra Seserman"
+            android:text="Nume utilizator"
             android:textColor="@color/colorWhite"
             android:fontFamily="@font/fredokaone"
             android:textSize="25dp"

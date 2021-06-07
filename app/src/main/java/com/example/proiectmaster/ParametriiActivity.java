@@ -23,11 +23,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proiectmaster.Models.Alarma;
 import com.example.proiectmaster.Services.BluetoothService;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -43,6 +47,8 @@ public class ParametriiActivity extends AppCompatActivity {
     FirebaseUser user;
     private FirebaseFirestore db;
     BluetoothAdapter bluetoothAdapter;
+
+    private double minTemp, maxTemp, minUmid, maxUmid, minPuls, maxPuls;
     private static final String TAG = "ParametriiActivity";
 
     // variables used for binding bluetooth service to this activity
@@ -95,6 +101,9 @@ public class ParametriiActivity extends AppCompatActivity {
                                 txtParamTemp.setText(splitValues[1]);
                                 txtParamPulse.setText(splitValues[2]);
                                 // TODO: ECG value must be added when tested together
+
+                                // Check parameters and create alarm if limits are exceeded
+                                checkParams(splitValues);
                             } catch (Exception ex) {
                                 Log.e(TAG, "Error caught while splitting sensor values", ex);
                             }
@@ -116,7 +125,10 @@ public class ParametriiActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parametrii);
-        getSupportActionBar().setTitle("Parametrii");
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        readParamLimits(user.getUid());
 
         txtParamECG = findViewById(R.id.txt_params_ecg);
         txtParamHumidity = findViewById(R.id.txt_params_humidity);
@@ -136,9 +148,6 @@ public class ParametriiActivity extends AppCompatActivity {
                 }
             }
         });
-
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (BluetoothAdapter.getDefaultAdapter() != null) {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -264,5 +273,85 @@ public class ParametriiActivity extends AppCompatActivity {
                 Log.w(TAG, "Error adding document", e);
                 }
             });
+    }
+
+    private void readParamLimits(String uid)
+    {
+        connect();
+        CollectionReference parametriRef = db.collection("pacienti").document(uid).collection("parametri");
+        // Puls
+        parametriRef.document("Puls").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    minPuls = document.getDouble("valMinima");
+                    maxPuls = document.getDouble("valMaxima");
+                    Log.d(TAG, "Puls: " + minPuls + " " + maxPuls);
+                } else {
+                    Log.d(TAG, "Error getting limits for Puls: ", task.getException());
+                }
+            }
+        });
+
+        // Temperatura
+        parametriRef.document("Temperatura").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    minTemp = document.getDouble("valMinima");
+                    maxTemp = document.getDouble("valMaxima");
+                } else {
+                    Log.d(TAG, "Error getting limits for Temperatura: ", task.getException());
+                }
+                Log.d(TAG, "Temperatura: " + minTemp + " " + maxTemp);
+            }
+        });
+
+        // Umiditate
+        parametriRef.document("Umiditate").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    minUmid = document.getDouble("valMinima");
+                    maxUmid = document.getDouble("valMaxima");
+                } else {
+                    Log.d(TAG, "Error getting limits for Umiditate: ", task.getException());
+                }
+                String[] values = {"27", "50", "80"};
+                checkParams(values);
+                Log.d(TAG, "Umiditate: " + minUmid + " " + maxUmid);
+            }
+        });
+    }
+
+    private void checkParams(String[] values)
+    {
+        double temp = Double.parseDouble(values[0]);
+        double umid = Double.parseDouble(values[1]);
+        double puls = Double.parseDouble(values[2]);
+
+        // Check puls
+        if (puls > maxPuls || puls < minPuls)
+        {
+            Alarma alarmPuls = new Alarma("Puls", new Date(), minPuls, maxPuls, puls, "");
+            openDialogAlarma(alarmPuls);
+        }
+
+        // Check temperatura
+        if (temp > maxTemp || temp < minTemp)
+        {
+            Alarma alarmTemp = new Alarma("Temperatura", new Date(), minTemp, maxTemp, temp, "");
+            openDialogAlarma(alarmTemp);
+        }
+
+        // Check umiditate
+        if (umid > maxUmid || umid < minUmid)
+        {
+            Alarma alarmUmid = new Alarma("Umiditate", new Date(), minUmid, maxUmid, umid, "");
+            openDialogAlarma(alarmUmid);
+        }
     }
 }
