@@ -30,8 +30,8 @@
                 android:id="@+id/btnAlarma"
                 android:layout_width="174dp"
                 android:layout_height="40dp"
-                android:layout_marginBottom="108dp"
-                android:background="@drawable/round_bg"
+                android:layout_marginBottom="72dp"
+                android:background="@drawable/round_bg_dark"
                 android:text="ALARMA"
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold"
@@ -280,6 +280,22 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="@font/fredokaone"
+                android:gravity="center"
+                android:text="Parametri"
+                android:textColor="@color/colorWhite"
+                android:textSize="25dp"
+                app:layout_constraintBottom_toTopOf="@+id/btnAlarma"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageHeader">
+            </TextView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

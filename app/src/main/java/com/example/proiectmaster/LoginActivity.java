@@ -30,7 +30,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getSupportActionBar().setTitle("Logare");
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
@@ -47,12 +46,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser != null)
                 {
-                    Toast.makeText(LoginActivity.this, "Ești logat!", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(LoginActivity.this, "Ești logat!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 }
                 else
                 {
-                    Toast.makeText(LoginActivity.this, "Loghează-te!", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(LoginActivity.this, "Loghează-te!", Toast.LENGTH_SHORT).show();
                 }
             }
         };

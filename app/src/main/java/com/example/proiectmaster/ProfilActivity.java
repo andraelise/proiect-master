@@ -31,7 +31,6 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
-        getSupportActionBar().setTitle("Profilul meu");
 
         numePacient = findViewById(R.id.txtNumeUtilizator);
         numeMedic = findViewById(R.id.txtMedic);
@@ -55,7 +54,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.btnLogout:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(ProfilActivity.this, RegisterActivity.class));
+                startActivity(new Intent(ProfilActivity.this, LoginActivity.class));
                 break;
             case R.id.btnResetParola:
                 String email = emailPacient.getText().toString();

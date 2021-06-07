@@ -34,7 +34,6 @@ public class RecomandariActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recomandari);
-        getSupportActionBar().setTitle("Recomandari");
 
         listView = findViewById(R.id.recomandariListView);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
