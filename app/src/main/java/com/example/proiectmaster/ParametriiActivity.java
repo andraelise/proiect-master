@@ -326,9 +326,10 @@ public class ParametriiActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent serviceIntent = new Intent(this,BluetoothService.class);
+        Intent serviceIntent = new Intent(this, BluetoothService.class);
         stopService(serviceIntent);
-  
+    }
+
     private void readParamLimits(String uid)
     {
         connect();
@@ -408,4 +409,5 @@ public class ParametriiActivity extends AppCompatActivity {
             openDialogAlarma(alarmUmid);
         }
     }
+
 }
