@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -23,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.proiectmaster.Models.Alarma;
 import com.example.proiectmaster.Services.BluetoothService;
+import com.example.proiectmaster.adapters.ECGAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,8 +36,11 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.robinhood.spark.SparkView;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class ParametriiActivity extends AppCompatActivity {
@@ -61,6 +67,10 @@ public class ParametriiActivity extends AppCompatActivity {
     TextView txtParamHumidity;
     TextView txtParamPulse;
     TextView txtParamECG;
+    SparkView ecgSparkView;
+
+    // ECG array from firebase
+    ArrayList<Float> _receivedValues;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -95,11 +105,12 @@ public class ParametriiActivity extends AppCompatActivity {
                         Log.d(TAG, "Sensor values: " + sensorValues);
                         if (!sensorValues.equals("")) {
                             String[] splitValues = sensorValues.split(";");
-                            // humidity; temp; pulse
+                            // humidity; temp; pulse; ECG
                             try {
                                 txtParamHumidity.setText(splitValues[0]);
                                 txtParamTemp.setText(splitValues[1]);
                                 txtParamPulse.setText(splitValues[2]);
+                                txtParamECG.setText(splitValues[3]);
                                 // TODO: ECG value must be added when tested together
 
                                 // Check parameters and create alarm if limits are exceeded
@@ -130,7 +141,12 @@ public class ParametriiActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         readParamLimits(user.getUid());
 
-        txtParamECG = findViewById(R.id.txt_params_ecg);
+        // initialize db and auth
+        db = FirebaseFirestore.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        _receivedValues = new ArrayList();
+        //txtParamECG = findViewById(R.id.txt_params_ecg);
         txtParamHumidity = findViewById(R.id.txt_params_humidity);
         txtParamPulse = findViewById(R.id.txt_params_pulse);
         txtParamTemp = findViewById(R.id.txt_params_temp);
@@ -140,6 +156,13 @@ public class ParametriiActivity extends AppCompatActivity {
 
         alarma = new Alarma("Temperatura", new Date(), 35, 37, 38.5, "");
 
+        ecgSparkView = findViewById(R.id.sv_ecg_values);
+        try {
+            getECGValues();
+        } catch (Exception ex)
+        {
+            Log.d(TAG,"Exception caught",ex);
+        }
         btnAlarma.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,6 +186,30 @@ public class ParametriiActivity extends AppCompatActivity {
         {
             Log.d(TAG, "BluetoothAdapter is null!");
         }
+    }
+
+    private void getECGValues()
+    {
+        db.collection("pacienti").document(mFirebaseAuth.getUid()).collection("parametri")
+                .document("ECG").get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> receivedValues = (ArrayList)documentSnapshot.get("valori");
+
+                        for(String item : receivedValues)
+                        {
+                            _receivedValues.add(Float.parseFloat(item.split(";")[1]));
+                        }
+                        ecgSparkView.setAdapter(new ECGAdapter(_receivedValues));
+                    }
+                })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG,"Failed to retrieve ECG values",e);
+            }
+        });
     }
 
     @Override
@@ -275,6 +322,13 @@ public class ParametriiActivity extends AppCompatActivity {
             });
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent serviceIntent = new Intent(this,BluetoothService.class);
+        stopService(serviceIntent);
+  
     private void readParamLimits(String uid)
     {
         connect();

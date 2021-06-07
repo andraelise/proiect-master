@@ -52,6 +52,13 @@ public class BluetoothService extends Service {
     private FirebaseFirestore db;
     CollectionReference parametriRef;
 
+    // hardware thresholds
+    static int tempThreshold = 30;
+    static int humidityThreshold = 30;
+    static int pulseThreshold = 50;
+    static int ECGThreshold = 200;
+
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -83,7 +90,15 @@ public class BluetoothService extends Service {
 
     public String getSensorsValues()
     {
-        return hardwareValues;
+        if(hardwareValues != null)
+        {
+            return hardwareValues;
+        }
+        else
+        {
+            return "";
+        }
+
     }
 
     @Override
@@ -107,9 +122,8 @@ public class BluetoothService extends Service {
 
                     case MESSAGE_READ:
                         String arduinoMsg = msg.obj.toString(); // Read message from Arduino
-                        hardwareValues = arduinoMsg;
-                        // TODO: add tresholds for values received from arduino
-                        // TODO: if values are correct add them to firebase
+                        hardwareValues = verifyValues(arduinoMsg);
+
                         if (!hardwareValues.equals("")) {
                             writeValuesToFirestore(hardwareValues);
                         }
@@ -125,6 +139,74 @@ public class BluetoothService extends Service {
         Log.d(TAG,"Connecting to device and starting service!");
         createConnectThread = new CreateConnectThread(bluetoothAdapter, deviceAddress);
         createConnectThread.start();
+    }
+
+    // this method shall check if the difference between new values and old onse are too big
+    public String verifyValues(String rawValues){
+        String[] oldHardValues;
+        StringBuilder sb = new StringBuilder();
+        try {
+            String[] newHardValues = rawValues.split(";");
+            if (hardwareValues != null)
+            {
+                oldHardValues = hardwareValues.split(";");
+            }
+            else
+            {
+                return rawValues;
+            }
+
+            if (!hardwareValues.equals("")) {
+                if(Integer.parseInt(oldHardValues[0]) == 0)
+                {
+                    sb.append(newHardValues[0]).append(";");
+                }
+                else if (Math.abs(Integer.parseInt(oldHardValues[0]) - Integer.parseInt(newHardValues[0])) < humidityThreshold) {
+                    sb.append(newHardValues[0]).append(";");
+                } else {
+                    Log.d(TAG, "Humidity was to high (spike caught): " + newHardValues[0]);
+                    sb.append(oldHardValues[0]);
+                }
+                if(Integer.parseInt(oldHardValues[1]) == 0)
+                {
+                    sb.append(newHardValues[1]).append(";");
+                }
+                else if (Math.abs(Integer.parseInt(oldHardValues[1]) - Integer.parseInt(newHardValues[1])) < tempThreshold) {
+                    sb.append(newHardValues[1]).append(";");
+                } else {
+                    Log.d(TAG, "Temp was to high (spike caught): " + newHardValues[1]);
+                    sb.append(oldHardValues[1]);
+                }
+
+                if(Double.parseDouble(oldHardValues[2]) == 0)
+                {
+                    sb.append(newHardValues[2]).append(";");
+                }
+                else if (Math.abs(Double.parseDouble(oldHardValues[2]) - Double.parseDouble(newHardValues[2])) < pulseThreshold) {
+                    sb.append(newHardValues[2]).append(";");
+                } else {
+                    Log.d(TAG, "Pulse was to high (spike caught): " + newHardValues[2]);
+                    sb.append(oldHardValues[2]);
+                }
+                if(newHardValues.length == 4)
+                {
+                    if(oldHardValues.length < 4)
+                    {
+                        sb.append(newHardValues[3]).append(";");
+                    }
+                    else if (Math.abs(Double.parseDouble(oldHardValues[3]) - Double.parseDouble(newHardValues[3])) < ECGThreshold) {
+                        sb.append(newHardValues[3]).append(";");
+                    } else {
+                        Log.d(TAG, "Pulse was to high (spike caught): " + newHardValues[3]);
+                        sb.append("0");
+                    }
+                }
+            }
+        }catch (Exception ex)
+        {
+            Log.e(TAG,"Exception caught while parsing values!",ex);
+        }
+        return sb.toString();
     }
 
     @Override
@@ -199,25 +281,57 @@ public class BluetoothService extends Service {
     public void writeValuesToFirestore(String values)
     {
         String humidity, temp, pulse;
+        String ECG = "0";
         String[] splitValues = values.split(";");
         // humidity; temp; pulse
         try {
             humidity = splitValues[0];
             temp = splitValues[1];
             pulse = splitValues[2];
-            // TODO: ECG value must be added when tested together
+            if(splitValues.length > 3)
+            {
+                ECG = splitValues[3];
+            }
 
+            if(humidity.equals("0") || temp.equals("0") || pulse.equals("0"))
+            {
+                return;
+            }
             Date data = new Date();
             String umiditate = data.toString() + ";" + humidity;
             String temperatura = data.toString() + ";" + temp;
             String puls = data.toString() + ";" + pulse;
+            String ecg = data.toString() + ";" + ECG;
+
+
             writeHumidity(umiditate);
             writeTemperature(temperatura);
             writePulse(puls);
+            if(!ECG.equals("0"))
+            {
+                writeECG(ecg);
+            }
         }
         catch (Exception ex) {
             Log.e(TAG, "Error caught while splitting sensor values", ex);
         }
+    }
+
+    public void writeECG(String ecg)
+    {
+        parametriRef.document("ECG").update("valori", FieldValue.arrayUnion(ecg))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Valoare adaugata cu succes: " + ecg);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Eroare la adaugarea valorii pentru ECG", e);
+                    }
+                });
     }
 
     public void writeHumidity(String humidity)
