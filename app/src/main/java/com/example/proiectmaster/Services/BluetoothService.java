@@ -53,10 +53,10 @@ public class BluetoothService extends Service {
     CollectionReference parametriRef;
 
     // hardware thresholds
-    static int tempThreshold = 30;
-    static int humidityThreshold = 30;
-    static int pulseThreshold = 50;
-    static int ECGThreshold = 200;
+    static int tempThreshold = 10;
+    static int humidityThreshold = 20;
+    static int pulseThreshold = 25;
+    static int ECGThreshold = 250;
 
 
     @Nullable
@@ -85,7 +85,7 @@ public class BluetoothService extends Service {
         mFirebaseAuth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
-        parametriRef = db.collection("pacienti").document(user.getUid()).collection("parametri");
+        parametriRef = db.collection("pacienti").document("gFfA9pfMe8HP5KD6qPiQLLKTk1").collection("parametri");
     }
 
     public String getSensorsValues()
@@ -122,6 +122,7 @@ public class BluetoothService extends Service {
 
                     case MESSAGE_READ:
                         String arduinoMsg = msg.obj.toString(); // Read message from Arduino
+                        Log.d(TAG,arduinoMsg + "\n\n");
                         hardwareValues = verifyValues(arduinoMsg);
 
                         if (!hardwareValues.equals("")) {
@@ -150,6 +151,9 @@ public class BluetoothService extends Service {
             if (hardwareValues != null)
             {
                 oldHardValues = hardwareValues.split(";");
+                if(oldHardValues.length != 4){
+                    oldHardValues = new String[]{"0", "0", "0", "0"};
+                }
             }
             else
             {
@@ -165,7 +169,7 @@ public class BluetoothService extends Service {
                     sb.append(newHardValues[0]).append(";");
                 } else {
                     Log.d(TAG, "Humidity was to high (spike caught): " + newHardValues[0]);
-                    sb.append(oldHardValues[0]);
+                    sb.append(oldHardValues[0]).append(";");
                 }
                 if(Integer.parseInt(oldHardValues[1]) == 0)
                 {
@@ -175,19 +179,29 @@ public class BluetoothService extends Service {
                     sb.append(newHardValues[1]).append(";");
                 } else {
                     Log.d(TAG, "Temp was to high (spike caught): " + newHardValues[1]);
-                    sb.append(oldHardValues[1]);
+                    sb.append(oldHardValues[1]).append(";");
                 }
+
 
                 if(Double.parseDouble(oldHardValues[2]) == 0)
                 {
-                    sb.append(newHardValues[2]).append(";");
+                    if (Double.parseDouble(oldHardValues[2]) > 140)
+                    {
+                        Log.d(TAG,"Pulse too big: " + oldHardValues[2]);
+                        oldHardValues[2] = "0";
+                    }
+                    else
+                    {
+                        sb.append(newHardValues[2]).append(";");
+                    }
                 }
                 else if (Math.abs(Double.parseDouble(oldHardValues[2]) - Double.parseDouble(newHardValues[2])) < pulseThreshold) {
                     sb.append(newHardValues[2]).append(";");
                 } else {
-                    Log.d(TAG, "Pulse was to high (spike caught): " + newHardValues[2]);
-                    sb.append(oldHardValues[2]);
+                    Log.d(TAG, "Pulse was to high/low (spike caught): " + newHardValues[2]);
+                    sb.append(oldHardValues[2]).append(";");
                 }
+
                 if(newHardValues.length == 4)
                 {
                     if(oldHardValues.length < 4)
@@ -197,13 +211,14 @@ public class BluetoothService extends Service {
                     else if (Math.abs(Double.parseDouble(oldHardValues[3]) - Double.parseDouble(newHardValues[3])) < ECGThreshold) {
                         sb.append(newHardValues[3]).append(";");
                     } else {
-                        Log.d(TAG, "Pulse was to high (spike caught): " + newHardValues[3]);
-                        sb.append("0");
+                        Log.d(TAG, "ECG was to high (spike caught): " + newHardValues[3]);
+                        sb.append(oldHardValues[3]).append(";");
                     }
                 }
             }
         }catch (Exception ex)
         {
+
             Log.e(TAG,"Exception caught while parsing values!",ex);
         }
         return sb.toString();
@@ -304,10 +319,16 @@ public class BluetoothService extends Service {
             String ecg = data.toString() + ";" + ECG;
 
 
-            writeHumidity(umiditate);
-            writeTemperature(temperatura);
-            writePulse(puls);
-            if(!ECG.equals("0"))
+            if(Double.parseDouble(humidity) > 0) {
+                writeHumidity(umiditate);
+            }
+            if(Double.parseDouble(temp) > 0) {
+                writeTemperature(temperatura);
+            }
+            if(Double.parseDouble(pulse) < 140) {
+                writePulse(puls);
+            }
+            if(!ECG.equals("0") && Double.parseDouble(ECG) < 600)
             {
                 writeECG(ecg);
             }

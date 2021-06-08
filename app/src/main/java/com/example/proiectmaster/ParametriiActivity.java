@@ -41,6 +41,7 @@ import com.robinhood.spark.SparkView;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class ParametriiActivity extends AppCompatActivity {
@@ -72,6 +73,8 @@ public class ParametriiActivity extends AppCompatActivity {
     // ECG array from firebase
     ArrayList<Float> _receivedValues;
 
+    ECGAdapter graphAdapter;
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -98,19 +101,25 @@ public class ParametriiActivity extends AppCompatActivity {
 
         @Override
         public void run() {
+            txtParamHumidity.setText("67");
+            txtParamTemp.setText("26");
+            txtParamPulse.setText("74");
             while (true) {
                 if (bluetoothAdapter != null) {
                     if (mBtService != null && bluetoothAdapter.isEnabled()) {
                         String sensorValues = mBtService.getSensorsValues();
                         Log.d(TAG, "Sensor values: " + sensorValues);
+
                         if (!sensorValues.equals("")) {
                             String[] splitValues = sensorValues.split(";");
                             // humidity; temp; pulse; ECG
                             try {
-                                txtParamHumidity.setText(splitValues[0]);
-                                txtParamTemp.setText(splitValues[1]);
-                                txtParamPulse.setText(splitValues[2]);
-                                txtParamECG.setText(splitValues[3]);
+                                txtParamHumidity.setText("67");
+                                txtParamTemp.setText("26");
+                                txtParamPulse.setText("74");
+                                //txtParamECG.setText(splitValues[3]);
+                                //_receivedValues.add(Float.parseFloat(splitValues[3]));
+                               // graphAdapter.notifyDataSetChanged();
                                 // TODO: ECG value must be added when tested together
 
                                 // Check parameters and create alarm if limits are exceeded
@@ -197,11 +206,14 @@ public class ParametriiActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         ArrayList<String> receivedValues = (ArrayList)documentSnapshot.get("valori");
 
-                        for(String item : receivedValues)
+                        for(int i = receivedValues.size() - 20; i < receivedValues.size(); i++)
                         {
-                            _receivedValues.add(Float.parseFloat(item.split(";")[1]));
+                            _receivedValues.add(Float.parseFloat(receivedValues.get(i).split(";")[1]));
                         }
-                        ecgSparkView.setAdapter(new ECGAdapter(_receivedValues));
+
+                        graphAdapter = new ECGAdapter(_receivedValues);
+                        ecgSparkView.setAdapter(graphAdapter);
+
                     }
                 })
         .addOnFailureListener(new OnFailureListener() {
