@@ -75,6 +75,8 @@ public class ParametriiActivity extends AppCompatActivity {
 
     ECGAdapter graphAdapter;
 
+    private int hardCounter = 0;
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -101,9 +103,10 @@ public class ParametriiActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            txtParamHumidity.setText("67");
-            txtParamTemp.setText("26");
-            txtParamPulse.setText("74");
+            String[] humidity = new String[]{"67", "70", "68", "66", "69", "65"};
+            String[] temperature = new String[]{"24", "25", "25", "26", "24", "25"};
+            String[] pulse = new String[]{"70", "80", "85", "93", "80", "75"};
+            Float[] ecgArray = new Float[]{380f,400f,420f,390f,470f,490f};
             while (true) {
                 if (bluetoothAdapter != null) {
                     if (mBtService != null && bluetoothAdapter.isEnabled()) {
@@ -129,14 +132,24 @@ public class ParametriiActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
                 } else {
                     Log.d(TAG, "BluetoothAdapter is null!");
                 }
+                if(hardCounter > humidity.length)
+                    return;
+
+                txtParamHumidity.setText(humidity[hardCounter]);
+                txtParamTemp.setText(temperature[hardCounter]);
+                txtParamPulse.setText(pulse[hardCounter]);
+                _receivedValues.add(ecgArray[hardCounter]);
+                hardCounter++;
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //graphAdapter.notifyDataSetChanged();
             }
         }
     }
