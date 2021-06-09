@@ -105,8 +105,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    String nume = document.getString("nume");
-                    String prenume = document.getString("prenume");
+                    String nume = document.getString("firstName");
+                    String prenume = document.getString("lastName");
                     displayPatientName(nume, prenume);
                 }
                 else {

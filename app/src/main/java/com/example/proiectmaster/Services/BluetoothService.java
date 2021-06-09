@@ -52,12 +52,6 @@ public class BluetoothService extends Service {
     private FirebaseFirestore db;
     CollectionReference parametriRef;
 
-    // hardware thresholds
-    static int tempThreshold = 10;
-    static int humidityThreshold = 20;
-    static int pulseThreshold = 25;
-    static int ECGThreshold = 250;
-
 
     @Nullable
     @Override
@@ -143,6 +137,11 @@ public class BluetoothService extends Service {
     }
 
     // this method shall check if the difference between new values and old onse are too big
+    // hardware thresholds
+    static int tempThreshold = 10;
+    static int humidityThreshold = 20;
+    static int pulseThreshold = 25;
+    static int ECGThreshold = 250;
     public String verifyValues(String rawValues){
         String[] oldHardValues;
         StringBuilder sb = new StringBuilder();
@@ -216,9 +215,9 @@ public class BluetoothService extends Service {
                     }
                 }
             }
-        }catch (Exception ex)
+        }
+        catch (Exception ex)
         {
-
             Log.e(TAG,"Exception caught while parsing values!",ex);
         }
         return sb.toString();
@@ -226,8 +225,8 @@ public class BluetoothService extends Service {
 
     @Override
     public void onDestroy() {
-        connectedThread.cancel();
-        createConnectThread.cancel();
+       // connectedThread.cancel();
+        //createConnectThread.cancel();
     }
 
     class CreateConnectThread extends Thread {

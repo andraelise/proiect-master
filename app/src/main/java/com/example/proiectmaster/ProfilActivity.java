@@ -79,10 +79,10 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    String nume = document.getString("nume");
-                    String prenume = document.getString("prenume");
+                    String nume = document.getString("firstName");
+                    String prenume = document.getString("lastName");
                     String email = document.getString("email");
-                    String uidMedic = document.getString("medic");
+                    String uidMedic = document.getString("doctorID");
                     getMedic(uidMedic);
                     displayDatePacient(nume, prenume, email);
                 }

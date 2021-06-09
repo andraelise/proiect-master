@@ -11,6 +11,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
@@ -103,10 +104,6 @@ public class ParametriiActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            String[] humidity = new String[]{"67", "70", "68", "66", "69", "65"};
-            String[] temperature = new String[]{"24", "25", "25", "26", "24", "25"};
-            String[] pulse = new String[]{"70", "80", "85", "93", "80", "75"};
-            Float[] ecgArray = new Float[]{380f,400f,420f,390f,470f,490f};
             while (true) {
                 if (bluetoothAdapter != null) {
                     if (mBtService != null && bluetoothAdapter.isEnabled()) {
@@ -117,14 +114,15 @@ public class ParametriiActivity extends AppCompatActivity {
                             String[] splitValues = sensorValues.split(";");
                             // humidity; temp; pulse; ECG
                             try {
-                                txtParamHumidity.setText("67");
-                                txtParamTemp.setText("26");
-                                txtParamPulse.setText("74");
+                                txtParamHumidity.setText(splitValues[0]);
+                                txtParamTemp.setText(splitValues[1]);
+                                txtParamPulse.setText(splitValues[2]);
                                 //txtParamECG.setText(splitValues[3]);
-                                //_receivedValues.add(Float.parseFloat(splitValues[3]));
+                                if(splitValues.length > 3)
+                                {
+                                    _receivedValues.add(Float.parseFloat(splitValues[3]));
+                                }
                                // graphAdapter.notifyDataSetChanged();
-                                // TODO: ECG value must be added when tested together
-
                                 // Check parameters and create alarm if limits are exceeded
                                 checkParams(splitValues);
                             } catch (Exception ex) {
@@ -135,21 +133,13 @@ public class ParametriiActivity extends AppCompatActivity {
 
                 } else {
                     Log.d(TAG, "BluetoothAdapter is null!");
-                }
-                if(hardCounter > humidity.length)
                     return;
-
-                txtParamHumidity.setText(humidity[hardCounter]);
-                txtParamTemp.setText(temperature[hardCounter]);
-                txtParamPulse.setText(pulse[hardCounter]);
-                _receivedValues.add(ecgArray[hardCounter]);
-                hardCounter++;
+                }
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                //graphAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -176,7 +166,8 @@ public class ParametriiActivity extends AppCompatActivity {
         btnAlarma = findViewById(R.id.btnAlarma);
         dialogAlarma = new Dialog(this);
 
-        alarma = new Alarma("Temperatura", new Date(), 35, 37, 38.5, "");
+        //alarma = new Alarma("Temperatura", new Date(), 35, 37, 38.5, "");
+        alarma = new Alarma("Puls", new Date(), 60, 90, 98, "");
 
         ecgSparkView = findViewById(R.id.sv_ecg_values);
         try {
@@ -189,6 +180,10 @@ public class ParametriiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (alarma != null) {
+                    if(graphAdapter != null)
+                    {
+                        graphAdapter.notifyDataSetChanged();
+                    }
                     openDialogAlarma(alarma);
                 }
             }
@@ -240,6 +235,14 @@ public class ParametriiActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                btnAlarma.callOnClick();
+            }
+        }, 22000);
+
         // bind to bluetooth service
         if (bluetoothAdapter != null) {
             if (BluetoothAdapter.getDefaultAdapter().isEnabled()) {
@@ -252,6 +255,7 @@ public class ParametriiActivity extends AppCompatActivity {
             Log.d(TAG, "BluetoothAdapter is null!");
         }
     }
+
 
     private void openDialogAlarma(Alarma alarma) {
         final Alarma alarm = alarma;
@@ -400,8 +404,8 @@ public class ParametriiActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "Error getting limits for Umiditate: ", task.getException());
                 }
-                String[] values = {"27", "50", "80"};
-                checkParams(values);
+                //String[] values = {"27", "50", "80"};
+                //checkParams(values);
                 Log.d(TAG, "Umiditate: " + minUmid + " " + maxUmid);
             }
         });

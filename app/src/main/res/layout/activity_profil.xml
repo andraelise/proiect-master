@@ -23,7 +23,7 @@
             android:id="@+id/txtNumeUtilizator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nume utilizator"
+            android:text="Andra Seserman"
             android:textColor="@color/colorWhite"
             android:fontFamily="@font/fredokaone"
             android:textSize="25dp"
@@ -83,7 +83,7 @@
                     android:id="@+id/txtMedic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nume medic"
+                    android:text="Andrei Popescu"
                     android:textSize="16sp" />
 
             </LinearLayout>

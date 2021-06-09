@@ -155,6 +155,7 @@ public class AdaugaActivitateActivity extends AppCompatActivity {
                     Toast.makeText(AdaugaActivitateActivity.this, "Evenimentul a fost adaugat cu succes!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(AdaugaActivitateActivity.this, CalendarActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
